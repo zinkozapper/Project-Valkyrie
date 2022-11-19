@@ -3,4 +3,7 @@
 #Please tell the other person when you start working on something so we don't have merge issues in GitHub.
 
 import Generator # imports other py files from the same directory
+import pygame
+
+
 print(Generator.test('a'))
