@@ -3,8 +3,11 @@
 
 import random
 import linecache
-from itertools import islice
-    
+from pathlib import Path
+
+
+localPath = Path(__file__).absolute().parent
+
     
 def makeGen(reader): #Is used by rawGenCount
     b = reader(1024 * 1024)
@@ -18,23 +21,23 @@ def rawGenCount(filename): #Determines # of lines in file
     return sum( buf.count(b'\n') for buf in f_gen ) 
     
     
-def genWord(length): #Generates a word of long, medium, or short length
-
+def genWord(length = 'Custom', wordList = localPath/'wordlist_long.txt'): #Generates a word of long, medium, or short length
+    
     if (length=='long'):
-        wordList = 'wordlist_long.txt'      
-    elif(length=='medium'):
-        wordList = 'wordlist_medium.txt'
+        wordList = localPath/'wordlist_long.txt'     
+    if(length=='medium'):
+        wordList = localPath/'wordlist_medium.txt'
     elif(length=='short'):
-        wordList = 'wordlist_short.txt'
-    else:
-        wordList='wordlist_medium.txt'
-        rnum=99999
-        print("Invalid length input! Please check your code (genWord function within Generator.py)!")
+        wordList = localPath/'wordlist_short.txt'
+    elif(length=='Custom'):
+        pass
+     
     rnum = random.randrange(1,rawGenCount(wordList))
-    return linecache.getline(wordList,rnum).rstrip('\n') # grabs word from line and removes \n
+    return linecache.getline(str(wordList),rnum).rstrip('\n') # grabs word from line and removes \n
 
 def multiGenWord(wc,length): # returns a list of words
     rels = []
     for i in range (wc):
         rels.append([genWord(length)])
     return[rels]
+

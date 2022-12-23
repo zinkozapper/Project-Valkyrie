@@ -2,17 +2,21 @@
 #We will most likely be using pygame for the UI components.
 #Please tell the other person when you start working on something so we don't have merge issues in GitHub.
 
-#import Generator # imports other py files from the same 
+import Generator as gen # imports other py files from the same 
 import pygame
 import pygame_gui
 from tkinter import filedialog, Text
+from pathlib import Path
 
+localPath = Path(__file__).absolute().parent
 
 
 pygame.init() #starts py game
 
 X = 800
 Y = 600
+
+wordlistLocation = ""
 
 
 pygame.display.set_caption('Project Valkyrie')
@@ -22,38 +26,54 @@ window_surface = pygame.display.set_mode((X, Y))
 
 #Background
 background = pygame.Surface((800, 600))
-background.fill(pygame.Color('#568123'))
+background.fill(pygame.Color('#050000'))
 #Text
 font = pygame.font.SysFont('Comic Sans MS', 32)
-text = font.render('Banana', True, pygame.Color('#987ADC'), pygame.Color('#21A5E3'))
+text = font.render('Banana', True, pygame.Color('#050000'), pygame.Color('#21A5E3'))
 textRect = text.get_rect()
 textRect.center = (200, 200)
 
 #Manager
 manager = pygame_gui.UIManager((800, 600))
 #Buttons
-choose_list_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((250, 150), (100, 50)),
-                                             text='Open File',
-                                             manager=manager)                                                                                       
-hello_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((350, 275), (100, 50)),
-                                             text='Say Hello',
+choose_list_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((15, 550), (250, 35)),
+                                             text='Select Custom Word List',
                                              manager=manager)
-generate_button_one = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((450, 375), (150, 35)),
-                                             text='Generate option 1',
+                                                                                       
+generate_button_one = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((75, 282), (200, 35)),
+                                             text='Generate short word',
                                              manager=manager)   
-generate_button_two = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((550, 475), (100, 50)),
-                                             text='Generate option 2',
+generate_button_two = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((300, 282), (200, 35)),
+                                             text='Generate medium word',
                                              manager=manager)
-generate_button_three = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((650, 150), (100, 50)),
-                                             text='Generate option 3',
+generate_button_three = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((525, 282), (200, 35)),
+                                             text='Generate long word',
                                              manager=manager)
+generate_button_four = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((188, 332), (200, 35)),
+                                             text='Generate 3 words',
+                                             manager=manager)
+generate_button_five = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((413, 332), (200, 35)),
+                                             text='Generate 5 words',
+                                             manager=manager)
+generate_Custom = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((290, 550), (200, 35)),
+                                             text='Generate from Custom',
+                                             manager=manager)
+
 #Text
-text_display_one = pygame_gui.elements.UITextBox(relative_rect= pygame.Rect((350,150),(250, 35)),
-                                             html_text='hi, this is some test text',
+title_text = pygame_gui.elements.UITextBox(relative_rect= pygame.Rect((275,15),(250, 35)),
+                                             html_text='Welcome to Project Valkyrie',
                                              manager=manager)
-text_display_one.set_active_effect(pygame_gui.TEXT_EFFECT_FADE_IN)                                          
+subtitle_text = pygame_gui.elements.UITextBox(relative_rect= pygame.Rect((250,55),(300, 35)),
+                                             html_text='An english essay prompt generator',
+                                             manager=manager)
+wordOutput = pygame_gui.elements.UITextBox(relative_rect= pygame.Rect((200,130),(400, 35)),
+                                             html_text='',
+                                             manager=manager)
+#title_text.set_active_effect(pygame_gui.TEXT_EFFECT_FADE_IN)   
+#wordOutput.set_active_effect(pygame_gui.TEXT_EFFECT_TILT)                                       
 
 
+generate_Custom.visible=False
 
 clock = pygame.time.Clock()
 is_running = True
@@ -67,13 +87,36 @@ while is_running:
         
         #UI Button clicks
         if event.type == pygame_gui.UI_BUTTON_PRESSED: 
-            if event.ui_element == hello_button:
-                print('Hello World!')
+            #File selector button
             if event.ui_element == choose_list_button:
                 selectedFileForReading = filedialog.askopenfilename(initialdir="~", 
                 title = "Select File",
                 filetypes = (("Text Files","*.txt"),
                 ("all files", "*.*")))
+                generate_Custom.visible=True
+                
+            #Genertate Buttons
+            if event.ui_element == generate_button_one:
+                wordOutput.set_text(gen.genWord('short'))
+            if event.ui_element == generate_button_two:
+               wordOutput.set_text(gen.genWord('medium'))
+            if event.ui_element == generate_button_three:
+                wordOutput.set_text(gen.genWord('long'))
+            if event.ui_element == generate_button_four:
+                textStr = gen.genWord('medium') + " " + gen.genWord('short') + " " + gen.genWord('long')
+                wordOutput.set_text(textStr) 
+            if event.ui_element == generate_button_five:
+                textStr = gen.genWord('medium') + " " + gen.genWord('short') + " " + gen.genWord('long') + " " + gen.genWord('short') + " " + gen.genWord('long')
+                wordOutput.set_text(textStr) 
+                
+            #Custom generate button    
+            if event.ui_element == generate_Custom:
+                if not '.txt' in selectedFileForReading:
+                    wordOutput.set_text("Please select valid .txt file!") 
+                else:
+                    wordOutput.set_text(gen.genWord('Custom', selectedFileForReading))
+
+            
              
 
         manager.process_events(event)
