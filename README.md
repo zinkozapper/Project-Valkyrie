@@ -4,8 +4,8 @@ HACS hack bracket competition #1
 How to build
 ```Navigate to Project-Valkyrie```
 
-Run the command ```pyinstaller --name Project Valkyrie --onefile app.py```
+Run the command ```pyinstaller 'Project Valkyrie.spec'```
 
 Navigate to ```Project-Valkyrie/dist```
 
-Run ```app.exe```
+Run ```Project Valkyrie.exe```
